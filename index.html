@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Planning System - AI Powered</title>
+    <style>
+        :root {
+            --primary: #6B46C1;
+            --primary-dark: #553C9A;
+            --secondary: #805AD5;
+            --accent: #D6BCFA;
+            --bg: #F7FAFC;
+            --text: #2D3748;
+            --text-light: #718096;
+            --white: #FFFFFF;
+            --success: #48BB78;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 1rem 2rem;
+            color: var(--white);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--primary);
+            color: var(--white);
+            padding: 3rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media(min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        /* Input Form Card */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            background: #F0FFF4;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #C6F6D5;
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Results Section */
+        #resultsSection {
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 4px solid var(--secondary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Blueprint Area */
+        .blueprint-container {
+            background: #1A202C;
+            border: 2px solid #2D3748;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .blueprint-title {
+            color: #63B3ED;
+            text-align: center;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #63B3ED;
+            padding-bottom: 0.5rem;
+        }
+
+        .blueprint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .room-node {
+            border: 2px solid #63B3ED;
+            background: rgba(99, 179, 237, 0.1);
+            color: #63B3ED;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            font-family: monospace;
+        }
+
+        .room-node span {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Schedule Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            border-left: 2px solid #E2E8F0;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--white);
+        }
+
+        .timeline-weeks {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .data-table th {
+            background-color: #F8FAFC;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* AI Analysis Box */
+        .ai-box {
+            background: linear-gradient(to right, #FAF5FF, #FFFFFF);
+            border: 1px solid #E9D8FD;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E2E8F0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                🏗️ Construction Planning System
+            </div>
+            <div>v1.0</div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>AI-Powered Project Planning</h1>
+        <p>Generate accurate blueprints, cost estimates, and schedules instantly using IBM Granite 3.3 2B.</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Input Form -->
+        <div class="input-section">
+            <div class="card">
+                <h2>📝 Project Details</h2>
+                <form id="projectForm">
+                    <div class="form-group">
+                        <label>Built-up Area (Sq. Yards)*</label>
+                        <input type="number" id="area" placeholder="e.g. 1000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Floors (e.g., G+2)*</label>
+                        <input type="text" id="floors" placeholder="G+2" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label>Days (Optional)</label>
+                                <input type="number" id="days" placeholder="Auto">
+                            </div>
+                            <div>
+                                <label>Workers (Optional)</label>
+                                <input type="number" id="workers" placeholder="Auto">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label>Daily Wage (₹)</label>
+                                <input type="number" id="wage" value="500">
+                            </div>
+                            <div>
+                                <label>Cost/Sq.Yard (₹)</label>
+                                <input type="number" id="cost_sq" value="1500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="ai_enable">
+                        <label for="ai_enable" style="margin:0; cursor:pointer;">
+                            Enable AI Analysis (Granite 3.3 2B)
+                            <br><small style="color: #666; font-weight:normal;">Requires Ollama running locally</small>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn">🚀 Generate Plan</button>
+                </form>
+            </div>
+            
+            <div class="card" style="margin-top: 2rem;">
+                 <h3>💡 How it Works</h3>
+                 <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                     1. Enter your plot area and floor count.<br>
+                     2. The system calculates material loads using engineering thumb rules.<br>
+                     3. Timelines are optimized for workforce efficiency.<br>
+                     4. Enable AI to get risk factors and optimization tips.
+                 </p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection">
+            
+            <!-- Summary Metrics -->
+            <div class="results-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Estimated Cost</div>
+                    <div class="metric-value" id="totalCost">₹0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Project Duration</div>
+                    <div class="metric-value" id="totalDuration">0 Months</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Man Days</div>
+                    <div class="metric-value" id="totalManDays">0</div>
+                </div>
+            </div>
+
+            <!-- Blueprint -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2>📐 Architectural Blueprint Concept</h2>
+                <div class="blueprint-container" id="blueprintContainer">
+                    <!-- Blueprint rendered here -->
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                
+                <!-- Cost & Materials -->
+                <div class="card">
+                    <h2>💰 Cost & Materials Breakdown</h2>
+                    <table class="data-table">
+                        <tr><th>Category</th><th>Amount / Quantity</th></tr>
+                        <tr><td>Steel (Tons)</td><td id="matSteel">-</td></tr>
+                        <tr><td>Cement (Bags)</td><td id="matCement">-</td></tr>
+                        <tr><td>Sand (Tons)</td><td id="matSand">-</td></tr>
+                        <tr><td>Labor Cost</td><td id="costLabor">-</td></tr>
+                        <tr><td>Material Cost</td><td id="costMaterial">-</td></tr>
+                        <tr><td>Overhead (10%)</td><td id="costOverhead">-</td></tr>
+                    </table>
+                </div>
+
+                <!-- Workers -->
+                <div class="card">
+                    <h2>👷 Worker Distribution</h2>
+                    <div id="workersList" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                        <!-- Worker badges injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="card" style="margin-top: 2rem;">
+                <h2>📅 Construction Schedule</h2>
+                <div class="timeline" id="timelineList">
+                    <!-- Timeline items injected here -->
+                </div>
+            </div>
+
+            <!-- AI Analysis -->
+            <div class="ai-box" id="aiSection" style="display: none;">
+                <div class="ai-header">
+                    <span>🤖 IBM Granite Analysis</span>
+                </div>
+                <p id="aiContent" style="white-space: pre-line;">Loading analysis...</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; font-weight: bold; color: var(--primary);">Crunching Numbers...</p>
+    </div>
+
+    <script>
+        document.getElementById('projectForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show Loader
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            
+            // Gather Data
+            const formData = {
+                built_up_area: document.getElementById('area').value,
+                floors: document.getElementById('floors').value,
+                days: document.getElementById('days').value,
+                workers: document.getElementById('workers').value,
+                daily_wage: document.getElementById('wage').value,
+                cost_per_sq_yard: document.getElementById('cost_sq').value,
+                enable_ai: document.getElementById('ai_enable').checked
+            };
+
+            try {
+                // Call Backend
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error("API Calculation Failed");
+
+                const data = await response.json();
+                
+                // Populate Results
+                updateUI(data);
+
+            } catch (error) {
+                alert("Error: " + error.message);
+                console.error(error);
+            } finally {
+                loader.style.display = 'none';
+            }
+        });
+
+        function updateUI(data) {
+            // Show Section
+            document.getElementById('resultsSection').style.display = 'block';
+
+            // 1. Summary
+            document.getElementById('totalCost').textContent = formatCurrency(data.costs.total_cost);
+            document.getElementById('totalDuration').textContent = data.project_summary.duration_months + " Months";
+            document.getElementById('totalManDays').textContent = data.project_summary.total_man_days;
+
+            // 2. Materials & Costs
+            document.getElementById('matSteel').textContent = data.materials.steel_tons + " tons";
+            document.getElementById('matCement').textContent = data.materials.cement_bags + " bags";
+            document.getElementById('matSand').textContent = data.materials.sand_tons + " tons";
+            document.getElementById('costLabor').textContent = formatCurrency(data.costs.labor_cost);
+            document.getElementById('costMaterial').textContent = formatCurrency(data.costs.material_cost);
+            document.getElementById('costOverhead').textContent = formatCurrency(data.costs.overhead_cost);
+
+            // 3. Workers
+            const workerContainer = document.getElementById('workersList');
+            workerContainer.innerHTML = '';
+            const wb = data.workers_breakdown;
+            Object.keys(wb).forEach(key => {
+                if (key !== 'total') {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'background: #E9D8FD; color: #553C9A; padding: 5px 15px; border-radius: 20px; font-weight: 600; text-transform: capitalize;';
+                    badge.textContent = `${key.replace('_', ' ')}: ${wb[key]}`;
+                    workerContainer.appendChild(badge);
+                }
+            });
+
+            // 4. Schedule
+            const timeline = document.getElementById('timelineList');
+            timeline.innerHTML = '';
+            data.schedule.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `
+                    <div class="timeline-weeks">${item.weeks}</div>
+                    <div class="timeline-title">${item.phase}</div>
+                    <div class="timeline-desc">${item.description}</div>
+                `;
+                timeline.appendChild(div);
+            });
+
+            // 5. Blueprint
+            const bpContainer = document.getElementById('blueprintContainer');
+            bpContainer.innerHTML = '';
+            
+            // Create a visual floor stack
+            const floors = data.blueprint_data.floors;
+            const layout = data.blueprint_data.layout;
+            
+            for(let i = floors; i >= 1; i--) {
+                const floorTitle = document.createElement('div');
+                floorTitle.className = 'blueprint-title';
+                floorTitle.textContent = `FLOOR ${i} PLAN`;
+                bpContainer.appendChild(floorTitle);
+
+                const grid = document.createElement('div');
+                grid.className = 'blueprint-grid';
+                
+                layout.forEach(room => {
+                    const node = document.createElement('div');
+                    node.className = 'room-node';
+                    node.innerHTML = `<strong>${room.room}</strong><span>${room.dim}</span><span>${room.area_sqft} sqft</span>`;
+                    grid.appendChild(node);
+                });
+                
+                bpContainer.appendChild(grid);
+                // Spacer
+                bpContainer.appendChild(document.createElement('br'));
+            }
+
+            // 6. AI Analysis
+            const aiSection = document.getElementById('aiSection');
+            if (data.ai_analysis) {
+                aiSection.style.display = 'block';
+                document.getElementById('aiContent').textContent = data.ai_analysis;
+            } else {
+                aiSection.style.display = 'none';
+            }
+        }
+
+        function formatCurrency(num) {
+            return "₹" + num.toLocaleString('en-IN');
+        }
+    </script>
+</body>
+</html>
